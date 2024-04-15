@@ -6,9 +6,9 @@ Adicione o nome dos integrantes aqui no README.md.
 
 Integrante 1: João Pedro Queiroz
 
-Integrante 2: Felipe Mariano
+Integrante 2: Felipe Mariano Ferreira
 
-Integrante 3: 
+Integrante 3: Luise Pessoa  Kreuzig Bastos
 
 Link repositório: https://github.com/Joao-Pedro-Queiroz/aps5_Prof_Eficaz?query=Joao-Pedro-Queiroz
 
