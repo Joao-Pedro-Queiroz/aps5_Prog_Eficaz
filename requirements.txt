@@ -12,3 +12,4 @@ requests
 streamlit
 pymongo
 Flask-PyMongo
+web-pdb
