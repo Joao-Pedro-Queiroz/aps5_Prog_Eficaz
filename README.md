@@ -10,7 +10,8 @@ Integrante 2: Felipe Mariano Ferreira
 
 Integrante 3: Luise Pessoa  Kreuzig Bastos
 
-Link repositório: https://github.com/Joao-Pedro-Queiroz/aps5_Prog_Eficaz
+Link repositório back-end: https://github.com/Joao-Pedro-Queiroz/aps5_Prog_Eficaz_back-end
+Link repositório front-end: https://github.com/Joao-Pedro-Queiroz/aps5_Prog_Eficaz_front-end
 
 ## Aluguel de Bicicletas Compartilhadas com Histórico de Empréstimos
 
