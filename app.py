@@ -80,5 +80,21 @@ def obter_usuario(id):
         else:
             return {"erro": "Usuário não encontrado"}, 404
 
+@app.route('/usuarios/<int:id>', methods=['DELETE'])
+def deletar_usuario(id):
+    try:
+        filtro = {"id": str(id)}
+        projecao = {"_id": 0}
+        dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro, projecao))
+    except:
+        return {"erro": "Erro no sistema"}, 500
+    else:
+        if dados_usuario:
+            mongo.db.usuarios_aps_5.delete_one(filtro)
+            return {"mensagem": "Usuário deletado com sucesso"}, 200
+        else:
+            return {"erro": "Usuário não encontrado"}, 404
+
+
 if __name__ == '__main__':
     app.run(debug=True)
