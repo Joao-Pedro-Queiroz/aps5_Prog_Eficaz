@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 import os
 
 app = Flask("nome_da_minha_aplicacao")
-app.config["MONGO_URI"] = os.getenv("string_conexao_MongoDB_biblioteca")
+app.config["MONGO_URI"] = "mongodb+srv://admin:admin@cluster0.ac4lm23.mongodb.net/biblioteca_db"
 mongo = PyMongo(app)
 
 
