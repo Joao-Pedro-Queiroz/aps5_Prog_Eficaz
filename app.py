@@ -3,26 +3,26 @@ from flask_pymongo import PyMongo
 import os
 
 app = Flask("nome_da_minha_aplicacao")
-app.config["MONGO_URI"] = "mongodb+srv://admin:admin@cluster0.ac4lm23.mongodb.net/biblioteca_db"
+app.config["MONGO_URI"] = os.getenv("string_conexao_MongoDB_biblioteca")
 mongo = PyMongo(app)
 
 
 @app.route('/usuarios', methods=['POST'])
 def adicionar_usuario():
     usuario = request.json
-    id = usuario.get("id")
+    id = usuario.get("id", "")
+    nome = usuario.get("nome", "")
+    cpf = usuario.get("cpf", "")
+    data_nascimento = usuario.get("data_nascimento", "")
 
-    filtro = {"id": id}
-    projecao = {"_id": 0}
-    cursor = mongo.db.usuarios_aps_5.find(filtro, projecao)
+    if not id or not nome or not cpf or not data_nascimento:
+        return {"error": "Id, nome, cpf e data de nascimento são obrigatórios"}, 400
     
-    # Convertendo o cursor em uma lista para facilitar a manipulação
-    dados_usuarios = list(cursor)
+    if mongo.db.usuarios_aps_5.find_one(filter={"id": id}):
+        return {"error": "Id já existe"}, 409
     
-    print(dados_usuarios)
-    
-    if len(dados_usuarios) > 0:
-        return {"erro": "Usuário já cadastrado"}, 400
+    if mongo.db.usuarios_aps_5.find_one(filter={"cpf": cpf}):
+        return {"error": "CPF já existe"}, 409
 
     mongo.db.usuarios_aps_5.insert_one(usuario)
 
@@ -61,8 +61,7 @@ def obter_usuario(id):
 def editar_usuario(id):
     try:
         filtro = {"id": id}
-        projecao = {"_id": 0}
-        cursor = mongo.db.usuarios_aps_5.find(filtro, projecao)
+        cursor = mongo.db.usuarios_aps_5.find(filtro)
         dados_usuarios = list(cursor)
     except:
         return {"erro": "Erro no sistema"}, 500
@@ -87,8 +86,7 @@ def editar_usuario(id):
 def deletar_usuario(id):
     try:
         filtro = {"id": id}
-        projecao = {"_id": 0}
-        dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro, projecao))
+        dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro))
     except:
         return {"erro": "Erro no sistema"}, 500
     else:
@@ -104,18 +102,15 @@ def deletar_usuario(id):
 def adicionar_bicicleta():
     bicicleta = request.json
     id = bicicleta.get("id")
+    marca = bicicleta.get("marca", "")
+    modelo = bicicleta.get("modelo", "")
+    cidade_alocada = bicicleta.get("cidade_alocada", "")
 
-    filtro = {"id": id}
-    projecao = {"_id": 0}
-    cursor = mongo.db.bicicletas_aps_5.find(filtro, projecao)
+    if not id or not marca or not modelo or not cidade_alocada:
+        return {"error": "Id, marca, modelo e cidade alocada são obrigatórios"}, 400
     
-    # Convertendo o cursor em uma lista para facilitar a manipulação
-    dados_bicicletas = list(cursor)
-    
-    print(dados_bicicletas)
-    
-    if len(dados_bicicletas) > 0:
-        return {"erro": "Bicicleta já cadastrado"}, 400
+    if mongo.db.bicicletas_aps_5.find_one({"id": id}):
+        return {"error": "Id já existe"}, 409
 
     mongo.db.bicicletas_aps_5.insert_one(bicicleta)
 
@@ -152,8 +147,7 @@ def obter_bicicleta(id):
 def editar_bicicleta(id):
     try:
         filtro = {"id": id}
-        projecao = {"_id": 0}
-        cursor = mongo.db.bicicletas_aps_5.find(filtro, projecao)
+        cursor = mongo.db.bicicletas_aps_5.find(filtro)
         dados_bicicletas = list(cursor)
     except:
         return {"erro": "Erro no sistema"}, 500
@@ -178,8 +172,7 @@ def editar_bicicleta(id):
 def deletar_bicicleta(id):
     try:
         filtro = {"id": id}
-        projecao = {"_id": 0}
-        dados_bicicleta = list(mongo.db.bicicletas_aps_5.find(filtro, projecao))
+        dados_bicicleta = list(mongo.db.bicicletas_aps_5.find(filtro))
     except:
         return {"erro": "Erro no sistema"}, 500
     else:
