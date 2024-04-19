@@ -1,23 +1,11 @@
 from flask import Flask, request
 from flask_pymongo import PyMongo
-
+import os
 
 app = Flask("nome_da_minha_aplicacao")
-app.config["MONGO_URI"] = "mongodb+srv://admin:admin@cluster0.ac4lm23.mongodb.net/biblioteca_db"
+app.config["MONGO_URI"] = os.getenv("string_conexao_MongoDB_biblioteca")
 mongo = PyMongo(app)
 
-
-@app.route('/usuarios', methods=['GET'])
-def get_all_users():
-    filtro = {}
-    projecao = {"_id": 0}
-    dados_usuarios = mongo.db.usuarios_aps_5.find(filtro, projecao)
-
-    resp = {
-        "usuarios": list(dados_usuarios)
-    }
-
-    return resp, 200
 
 @app.route('/usuarios', methods=['POST'])
 def adicionar_usuario():
@@ -41,10 +29,38 @@ def adicionar_usuario():
     return {"mensagem": "Usuário adicionado com sucesso"}, 201
 
 
+@app.route('/usuarios', methods=['GET'])
+def get_all_users():
+    filtro = {}
+    projecao = {"_id": 0}
+    dados_usuarios = mongo.db.usuarios_aps_5.find(filtro, projecao)
+
+    resp = {
+        "usuarios": list(dados_usuarios)
+    }
+
+    return resp, 200
+
+
+@app.route('/usuarios/<int:id>', methods=['GET'])
+def obter_usuario(id):
+    try:
+        filtro = {"id": id}
+        projecao = {"_id": 0}
+        dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro, projecao))
+    except:
+        return {"erro": "Erro no sistema"}, 500
+    else:
+        if dados_usuario:
+            return {"usuarios": list(dados_usuario)}, 200
+        else:
+            return {"erro": "Usuário não encontrado"}
+
+
 @app.route('/usuarios/<int:id>', methods=['PUT'])
 def editar_usuario(id):
     try:
-        filtro = {"id": str(id)}
+        filtro = {"id": id}
         projecao = {"_id": 0}
         cursor = mongo.db.usuarios_aps_5.find(filtro, projecao)
         dados_usuarios = list(cursor)
@@ -66,24 +82,11 @@ def editar_usuario(id):
 
             return {"mensagem": "Usuário atualizado com sucesso"}, 200
 
-@app.route('/usuarios/<int:id>', methods=['GET'])
-def obter_usuario(id):
-    try:
-        filtro = {"id": str(id)}
-        projecao = {"_id": 0}
-        dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro, projecao))
-    except:
-        return {"erro": "Erro no sistema"}, 500
-    else:
-        if dados_usuario:
-            return {"usuarios": dados_usuario}, 200
-        else:
-            return {"erro": "Usuário não encontrado"}, 404
 
 @app.route('/usuarios/<int:id>', methods=['DELETE'])
 def deletar_usuario(id):
     try:
-        filtro = {"id": str(id)}
+        filtro = {"id": id}
         projecao = {"_id": 0}
         dados_usuario = list(mongo.db.usuarios_aps_5.find(filtro, projecao))
     except:
