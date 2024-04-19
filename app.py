@@ -23,8 +23,15 @@ def adicionar_usuario():
     
     if mongo.db.usuarios_aps_5.find_one(filter={"cpf": cpf}):
         return {"error": "CPF já existe"}, 409
+    
+    novo_usuario = {
+        "id": id,
+        "nome": nome,
+        "cpf": cpf,
+        "data_nascimento": data_nascimento
+    }
 
-    mongo.db.usuarios_aps_5.insert_one(usuario)
+    mongo.db.usuarios_aps_5.insert_one(novo_usuario)
 
     return {"mensagem": "Usuário adicionado com sucesso"}, 201
 
@@ -70,8 +77,22 @@ def editar_usuario(id):
             return {"erro": "Usuário não encontrado"}, 404
         else:
             data = request.json
+            nome = data.get("nome", "")
+            cpf = data.get("cpf", "")
+            data_nascimento = data.get("data_nascimento", "")
+            dados = {}
+            
+            if nome:
+                dados["nome"] = nome
+
+            if cpf:
+                dados["cpf"] = cpf
+
+            if data_nascimento:
+                dados["data_nascimento"] = data_nascimento
+
             novos_dados = {
-                "$set": data
+                "$set": dados
             }
 
             try:
@@ -111,8 +132,15 @@ def adicionar_bicicleta():
     
     if mongo.db.bicicletas_aps_5.find_one({"id": id}):
         return {"error": "Id já existe"}, 409
+    
+    nova_bicicleta = {
+        "id": id,
+        "marca": marca,
+        "modelo": modelo,
+        "cidade_alocada": cidade_alocada
+    }
 
-    mongo.db.bicicletas_aps_5.insert_one(bicicleta)
+    mongo.db.bicicletas_aps_5.insert_one(nova_bicicleta)
 
     return {"mensagem": "Bicicleta adicionado com sucesso"}, 201
 
@@ -156,8 +184,22 @@ def editar_bicicleta(id):
             return {"erro": "Bicicleta não encontrada"}, 404
         else:
             data = request.json
+            marca = data.get("marca", "")
+            modelo = data.get("modelo", "")
+            cidade_alocada = data.get("cidade_alocada", "")
+            dados = {}
+            
+            if marca:
+                dados["marca"] = marca
+
+            if modelo:
+                dados["modelo"] = modelo
+
+            if cidade_alocada:
+                dados["cidade_alocada"] = cidade_alocada
+
             novos_dados = {
-                "$set": data
+                "$set": dados
             }
 
             try:
