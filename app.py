@@ -31,16 +31,22 @@ def adicionar_usuario():
         "data_nascimento": data_nascimento
     }
 
-    mongo.db.usuarios_aps_5.insert_one(novo_usuario)
+    try:
+        mongo.db.usuarios_aps_5.insert_one(novo_usuario)
+    except:
+        return {"error": "Dados inválidos"}, 400
 
     return {"mensagem": "Usuário adicionado com sucesso"}, 201
 
 
 @app.route('/usuarios', methods=['GET'])
 def get_all_users():
-    filtro = {}
-    projecao = {"_id": 0}
-    dados_usuarios = mongo.db.usuarios_aps_5.find(filtro, projecao)
+    try:
+        filtro = {}
+        projecao = {"_id": 0}
+        dados_usuarios = mongo.db.usuarios_aps_5.find(filtro, projecao)
+    except:
+        return {"error": "Erro no sistema"}, 500
 
     resp = {
         "usuarios": list(dados_usuarios)
@@ -112,7 +118,11 @@ def deletar_usuario(id):
         return {"erro": "Erro no sistema"}, 500
     else:
         if dados_usuario:
-            mongo.db.usuarios_aps_5.delete_one(filtro)
+            try:
+                mongo.db.usuarios_aps_5.delete_one(filtro)
+            except:
+                return {"erro": "Dados inválidos"}, 400
+            
             return {"mensagem": "Usuário deletado com sucesso"}, 200
         else:
             return {"erro": "Usuário não encontrado"}, 404
@@ -140,17 +150,23 @@ def adicionar_bicicleta():
         "cidade_alocada": cidade_alocada
     }
 
-    mongo.db.bicicletas_aps_5.insert_one(nova_bicicleta)
+    try:
+        mongo.db.bicicletas_aps_5.insert_one(nova_bicicleta)
+    except:
+        return {"error": "Dados inválidos"}, 400
 
     return {"mensagem": "Bicicleta adicionado com sucesso"}, 201
 
 
 @app.route('/bikes', methods=['GET'])
 def get_all_bikes():
-    filtro = {}
-    projecao = {"_id": 0}
-    dados_bicicletas = mongo.db.bicicletas_aps_5.find(filtro, projecao)
-
+    try:
+        filtro = {}
+        projecao = {"_id": 0}
+        dados_bicicletas = mongo.db.bicicletas_aps_5.find(filtro, projecao)
+    except:
+        return {"error": "Erro no sistema"}, 500
+    
     resp = {
         "bicicletas": list(dados_bicicletas)
     }
@@ -219,7 +235,11 @@ def deletar_bicicleta(id):
         return {"erro": "Erro no sistema"}, 500
     else:
         if dados_bicicleta:
-            mongo.db.bicicletas_aps_5.delete_one(filtro)
+            try:
+                mongo.db.bicicletas_aps_5.delete_one(filtro)
+            except:
+                return {"erro": "Dados inválidos"}, 400
+            
             return {"mensagem": "Bicicleta deletada com sucesso"}, 200
         else:
             return {"erro": "Bicicleta não encontrada"}, 404
