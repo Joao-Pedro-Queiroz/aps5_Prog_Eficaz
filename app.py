@@ -136,6 +136,7 @@ def adicionar_bicicleta():
     marca = bicicleta.get("marca", "")
     modelo = bicicleta.get("modelo", "")
     cidade_alocada = bicicleta.get("cidade_alocada", "")
+    status = "disponível"
 
     if not id or not marca or not modelo or not cidade_alocada:
         return {"error": "Id, marca, modelo e cidade alocada são obrigatórios"}, 400
@@ -147,7 +148,8 @@ def adicionar_bicicleta():
         "id": id,
         "marca": marca,
         "modelo": modelo,
-        "cidade_alocada": cidade_alocada
+        "cidade_alocada": cidade_alocada,
+        "status": status
     }
 
     try:
@@ -203,6 +205,7 @@ def editar_bicicleta(id):
             marca = data.get("marca", "")
             modelo = data.get("modelo", "")
             cidade_alocada = data.get("cidade_alocada", "")
+            status = data.get("status", "")
             dados = {}
             
             if marca:
@@ -213,6 +216,11 @@ def editar_bicicleta(id):
 
             if cidade_alocada:
                 dados["cidade_alocada"] = cidade_alocada
+
+            if status == "disponível" or status == "em uso":
+                dados["status"] = status
+            else:
+                return {"erro": "Status inválido"}, 400
 
             novos_dados = {
                 "$set": dados
