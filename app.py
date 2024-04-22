@@ -268,6 +268,15 @@ def cadastrar_emprestimp(id_usuario, id_bike):
     if mongo.db.emprestimos_aps_5.find_one({"id": id}):
         return {"error": "Id já existe"}, 409
     
+    if mongo.db.emprestimos_aps_5.find_one({"id_bicicleta": id_bicicleta}):
+        return {"error": "Bicicleta já possui um empréstimo"}, 409
+    
+    if not mongo.db.usuarios_aps_5.find_one({"id": id_bicicleta}):
+        return {"error": "Usuário não encontrado"}, 404
+
+    if not mongo.db.bicicletas_aps_5.find_one({"id": id_bicicleta}):
+        return {"error": "Bicicleta não encontrada"}, 404
+
     novo_emprestimo = {
         "id": id,
         "id_usuario": id_usuario,
@@ -285,9 +294,19 @@ def cadastrar_emprestimp(id_usuario, id_bike):
 
 @app.route('/emprestimos', methods=['GET'])
 def get_all_emprestimos():
+    id_usuario = request.args.get('id_usuario', '')
+    id_bicicleta = request.args.get('id_bicicleta', '')
+
     try:
         filtro = {}
-        projecao = {"_id": 0}
+        projecao = {"_id": 0, "data_alugado": 0}
+
+        if id_usuario:
+            filtro["id_usuario"] = int(id_usuario)
+        
+        if id_bicicleta:
+            filtro["id_bicicleta"] = int(id_bicicleta)
+
         dados_emprestimos = mongo.db.emprestimos_aps_5.find(filtro, projecao)
     except:
         return {"error": "Erro no sistema"}, 500
