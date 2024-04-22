@@ -251,6 +251,71 @@ def deletar_bicicleta(id):
             return {"mensagem": "Bicicleta deletada com sucesso"}, 200
         else:
             return {"erro": "Bicicleta não encontrada"}, 404
+        
+#CRUD EMPRÈSTIMOS
+
+@app.route('/emprestimos/usuarios/<int:id_usuario>/bikes/<int:id_bike>', methods=['POST'])
+def cadastrar_emprestimp(id_usuario, id_bike):
+    emprestimo = request.json
+    id = emprestimo.get("id")
+    id_usuario = id_usuario
+    id_bicicleta = id_bike
+    data_alugado = emprestimo.get("data_alugado", "")
+
+    if not id or not id_usuario or not id_bicicleta or not data_alugado:
+        return {"error": "Id, id do usuário, id da bicicleta e data do aluguel são obrigatórios"}, 400
+    
+    if mongo.db.emprestimos_aps_5.find_one({"id": id}):
+        return {"error": "Id já existe"}, 409
+    
+    novo_emprestimo = {
+        "id": id,
+        "id_usuario": id_usuario,
+        "id_bicicleta": id_bicicleta,
+        "data_alugado": data_alugado
+    }
+
+    try:
+        mongo.db.emprestimos_aps_5.insert_one(novo_emprestimo)
+    except:
+        return {"error": "Dados inválidos"}, 400
+
+    return {"mensagem": "Bicicleta adicionado com sucesso"}, 201
+
+
+@app.route('/emprestimos', methods=['GET'])
+def get_all_emprestimos():
+    try:
+        filtro = {}
+        projecao = {"_id": 0}
+        dados_emprestimos = mongo.db.emprestimos_aps_5.find(filtro, projecao)
+    except:
+        return {"error": "Erro no sistema"}, 500
+
+    resp = {
+        "emprestimos": list(dados_emprestimos)
+    }
+
+    return resp, 200
+
+
+@app.route('/emprestimos/<int:id>', methods=['DELETE'])
+def deletar_emprestimo(id):
+    try:
+        filtro = {"id": id}
+        dados_emprestimo = list(mongo.db.emprestimos_aps_5.find(filtro))
+    except:
+        return {"erro": "Erro no sistema"}, 500
+    else:
+        if dados_emprestimo:
+            try:
+                mongo.db.emprestimos_aps_5.delete_one(filtro)
+            except:
+                return {"erro": "Dados inválidos"}, 400
+    
+            return {"mensagem": "Empréstimo deletado com sucesso"}, 200
+        else:
+            return {"erro": "Empréstimo não encontrada"}, 404
 
 
 if __name__ == '__main__':
